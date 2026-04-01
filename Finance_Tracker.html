@@ -44,11 +44,14 @@
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; align-items: end; }
         input, select { background: var(--bg); border: 1px solid var(--border2); padding: 10px; border-radius: var(--radius-sm); color: white; width: 100%; outline: none; }
         input:focus { border-color: var(--green); }
-        .btn { padding: 10px 20px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn { padding: 10px 20px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-weight: 600; transition: 0.2s; font-family: inherit; }
         .btn-primary { background: var(--green); color: #000; }
         .btn-primary:hover { opacity: 0.9; }
-        .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
-        .btn-danger { color: var(--red); background: var(--red-dim); }
+        .btn-ghost { background: var(--surface2); color: var(--muted); border: 1px solid var(--border2); }
+        .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+        .btn-danger { color: var(--red); background: var(--red-dim); border: 1px solid transparent; }
+        .btn-danger:hover { border-color: var(--red); }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
 
         /* Tables & Lists */
         .tx-group-header { font-size: 12px; color: var(--muted); margin: 20px 0 10px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
@@ -118,7 +121,7 @@
                     </div>
                     <div><label class="metric-label">Wallet</label><select id="f-wallet"><option>Bank</option><option>Cash</option></select></div>
                     <div><label class="metric-label">Type</label><select id="f-type"><option value="expense">Expense</option><option value="income">Income</option></select></div>
-                    <button class="btn btn-primary" onclick="handleTransaction()">Save</button>
+                    <button class="btn btn-primary" onclick="handleTransaction()">Save Entry</button>
                 </div>
             </div>
             <div class="card">
@@ -127,14 +130,6 @@
                     <input type="text" id="tx-search" placeholder="Search..." style="width: 200px;" oninput="renderTransactions()">
                 </div>
                 <div id="tx-list"></div>
-            </div>
-        </div>
-
-        <div id="page-budget" class="page">
-            <div class="card">
-                <h3>Monthly Limits</h3>
-                <p style="color: var(--muted); margin-bottom: 20px;">Tracking expenses against your set limits.</p>
-                <div id="budget-list"></div>
             </div>
         </div>
 
@@ -327,8 +322,8 @@
                     <div style="width: 40px; font-size: 20px;">${t.type === 'income' ? '💰' : '💸'}</div>
                     <div class="tx-info"><div style="font-weight: 500">${t.desc}</div><div style="font-size: 11px; color: var(--muted)">${t.cat} • ${t.wallet}</div></div>
                     <div class="tx-amt ${t.type === 'income' ? 'text-green' : 'text-red'}">${t.type === 'income' ? '+' : '-'} ₹${t.amt.toLocaleString()}</div>
-                    <button class="btn btn-ghost" onclick="editTx(${t.id})">Edit</button>
-                    <button class="btn btn-danger" onclick="deleteTx(${t.id})">✕</button>
+                    <button class="btn btn-ghost btn-sm" onclick="editTx(${t.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteTx(${t.id})">✕</button>
                 </div>`;
         });
     }
@@ -342,22 +337,21 @@
             const pct = Math.min(100, (g.current / g.target) * 100);
             return `
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                         <div class="metric-label">${g.name}</div>
-                        <div style="display:flex; gap:8px;">
-                            <button class="btn-ghost" style="font-size:11px" onclick="editGoal(${g.id})">Edit</button>
-                            <button class="btn-ghost text-red" style="font-size:11px" onclick="deleteGoal(${g.id})">✕</button>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn btn-ghost btn-sm" onclick="editGoal(${g.id})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteGoal(${g.id})">✕</button>
                         </div>
                     </div>
                     <div class="metric-value" style="font-size: 18px">₹${g.current.toLocaleString()} / ₹${g.target.toLocaleString()}</div>
                     <div style="height: 6px; background: var(--bg); border-radius: 3px; margin: 15px 0;">
-                        <div style="width: ${pct}%; height: 100%; background: ${pct>=100?'var(--green)':'var(--blue)'}; border-radius: 3px;"></div>
+                        <div style="width: ${pct}%; height: 100%; background: ${pct>=100?'var(--green)':'var(--blue)'}; border-radius: 3px; transition: width 0.4s ease;"></div>
                     </div>
-                    <button class="btn btn-ghost" style="width: 100%" onclick="updateGoal(${g.id})">${pct>=100?'Completed!':'Add Funds'}</button>
+                    <button class="btn btn-ghost" style="width: 100%" onclick="updateGoal(${g.id})">${pct>=100?'Completed! ✨':'Add Contribution'}</button>
                 </div>`;
         }).join('');
     }
-
 
     function initCharts() {
         const summary = {};
