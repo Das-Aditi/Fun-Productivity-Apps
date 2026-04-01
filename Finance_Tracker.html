@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>FinanceFlow | Aditi</title>
+    <title>Finance Flow | Aditi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <style>
@@ -71,13 +71,12 @@
 <div class="shell">
     <aside class="sidebar">
         <div class="logo">
-            <div class="logo-title">FinanceFlow</div>
+            <div class="logo-title">Finance Flow</div>
             <div style="font-size: 11px; color: var(--muted)">PERSONAL TRACKER</div>
         </div>
         <nav>
             <div class="nav-item active" onclick="showPage('overview', this)">◈ Overview</div>
             <div class="nav-item" onclick="showPage('transactions', this)">🧾 Transactions</div>
-            <div class="nav-item" onclick="showPage('budget', this)">🧮 Budgets</div>
             <div class="nav-item" onclick="showPage('goals', this)">🎯 Goals</div>
         </nav>
         <div style="margin-top: auto; padding: 20px;">
@@ -168,7 +167,6 @@
     let state = {
         transactions: JSON.parse(localStorage.getItem('aditi_tx') || '[]'),
         goals: JSON.parse(localStorage.getItem('aditi_goals') || '[]'),
-        budgets: { "Food": 5000, "Shopping": 3000, "Travel": 2000 }
     };
 
     let editingId = null;
@@ -303,7 +301,6 @@
         renderOverview();
         renderTransactions();
         renderGoals();
-        renderBudgets();
     }
 
     function renderOverview() {
@@ -361,18 +358,6 @@
         }).join('');
     }
 
-    function renderBudgets() {
-        const cont = document.getElementById('budget-list');
-        cont.innerHTML = Object.entries(state.budgets).map(([cat, limit]) => {
-            const spent = state.transactions.filter(t => t.cat === cat && t.type === 'expense').reduce((a, b) => a + b.amt, 0);
-            const pct = Math.min(100, (spent/limit)*100);
-            return `
-                <div style="margin-bottom: 20px">
-                    <div style="display:flex; justify-content: space-between; margin-bottom: 8px;"><span>${cat}</span><span style="color: var(--muted)">₹${spent} / ₹${limit}</span></div>
-                    <div style="height: 4px; background: var(--bg); border-radius: 2px;"><div style="width: ${pct}%; height:100%; background: ${pct > 90 ? 'var(--red)' : 'var(--green)'};"></div></div>
-                </div>`;
-        }).join('');
-    }
 
     function initCharts() {
         const summary = {};
