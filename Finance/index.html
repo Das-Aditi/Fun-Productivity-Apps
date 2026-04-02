@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Finance Flow | Aditi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="shell">
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-title">Finance Flow</div>
+            <div style="font-size: 11px; color: var(--muted)">BANKING & INVESTMENTS</div>
+        </div>
+        <nav>
+            <div class="nav-item active" onclick="showPage('overview', this)">◈ Overview</div>
+            <div class="nav-item" onclick="showPage('transactions', this)">🧾 Transactions</div>
+            <div class="nav-item" onclick="showPage('accounts', this)">🏦 Accounts</div>
+            <div class="nav-item" onclick="showPage('goals', this)">🎯 Goals</div>
+        </nav>
+        <div style="margin-top: auto; padding: 20px;">
+            <button class="btn btn-ghost" style="width: 100%; margin-bottom: 8px;" onclick="exportData()">Export JSON</button>
+            <input type="file" id="importFile" class="hidden" onchange="importData(event)">
+            <button class="btn btn-ghost" style="width: 100%" onclick="document.getElementById('importFile').click()">Import JSON</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div id="page-overview" class="page active">
+            <h1 style="margin-bottom: 24px;">Financial Intelligence</h1>
+            <div class="grid-3" id="overview-metrics"></div>
+            <div class="grid-3">
+                <div class="card" style="grid-column: span 2;">
+                    <div class="metric-label">Net Worth Trend</div>
+                    <div style="height: 250px;"><canvas id="chartTrend"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="metric-label">Inflow vs Outflow</div>
+                    <div style="height: 250px;"><canvas id="chartMix"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-transactions" class="page">
+            <div class="card">
+                <h3 id="tx-form-title" style="margin-bottom: 15px;">Add Transaction</h3>
+                <div class="form-grid">
+                    <div><label class="metric-label">Date</label><input type="date" id="f-date"></div>
+                    <div><label class="metric-label">Description</label><input type="text" id="f-desc" placeholder="Salary, Rent, Pizza..."></div>
+                    <div><label class="metric-label">Amount</label><input type="number" id="f-amt" placeholder="₹ 0.00"></div>
+                    <div>
+                        <label class="metric-label">Category</label>
+                        <select id="f-cat">
+                            <option>Salary</option><option>Food</option><option>Travel</option>
+                            <option>Rent</option><option>Shopping</option><option>Bills</option><option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="metric-label">Account/Wallet</label>
+                        <select id="f-wallet">
+                            </select>
+                    </div>
+                    <div><label class="metric-label">Type</label><select id="f-type"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+                    <button class="btn btn-primary" onclick="handleTransaction()">Save Entry</button>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>Transaction History</h3>
+                    <input type="text" id="tx-search" placeholder="Search..." style="width: 200px;" oninput="renderTransactions()">
+                </div>
+                <div id="tx-list"></div>
+            </div>
+        </div>
+
+        <div id="page-accounts" class="page">
+            <div class="card">
+                <h3>🏦 Register New Account</h3>
+                <div class="form-grid" style="margin-top:15px;">
+                    <div style="grid-column: span 2;">
+                        <label class="metric-label">Bank Name</label>
+                        <input type="text" id="acc-name" placeholder="e.g., SBI, HDFC, Pocket Cash">
+                    </div>
+                    <div>
+                        <label class="metric-label">Type</label>
+                        <select id="acc-type">
+                            <option value="Bank">Bank Account</option>
+                            <option value="Cash">Cash Wallet</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="addAccount()">Add Account</button>
+                </div>
+            </div>
+
+            <div class="grid-3" id="bank-cards-container">
+                </div>
+
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>Fixed Deposit (FD) Manager</h3>
+                    <button class="btn btn-ghost btn-sm" onclick="showFDForm()">+ New FD Investment</button>
+                </div>
+    
+                <div id="fd-form" class="form-grid hidden" style="margin-bottom:20px; padding:20px; background:var(--surface2); border-radius:var(--radius-sm); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                    <div>
+                        <label class="metric-label">Bank Name</label>
+                        <input type="text" id="fd-bank" placeholder="e.g. HDFC">
+                    </div>
+                    <div>
+                        <label class="metric-label">Beneficiary Name</label>
+                        <input type="text" id="fd-beneficiary" placeholder="e.g. Self, Mother">
+                    </div>
+                    <div>
+                        <label class="metric-label">Principal Amount</label>
+                        <input type="number" id="fd-amount" placeholder="₹">
+                    </div>
+                    <div>
+                        <label class="metric-label">Interest Rate %</label>
+                        <input type="number" step="0.1" id="fd-rate" placeholder="7.5">
+                    </div>
+                    <div>
+                        <label class="metric-label">Created Date</label>
+                        <input type="date" id="fd-created">
+                    </div>
+                    <div>
+                        <label class="metric-label">Maturity Date</label>
+                        <input type="date" id="fd-maturity">
+                    </div>
+                    <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-ghost" onclick="showFDForm()">Cancel</button>
+                        <button class="btn btn-primary" onclick="saveFD()">Save Investment</button>
+                    </div>
+                </div>
+
+                <div id="fd-list" style="overflow-x: auto;">
+                    </div>
+            </div>
+        </div>
+
+        <div id="page-goals" class="page">
+            <div class="card">
+                <h3 id="g-form-title" style="margin-bottom: 15px;">New Saving Goal</h3>
+                <div class="form-grid">
+                    <div style="grid-column: span 2;">
+                        <label class="metric-label">Goal Name</label>
+                        <input type="text" id="g-name" placeholder="e.g. Higher Studies">
+                    </div>
+                    <div><label class="metric-label">Target (₹)</label><input type="number" id="g-target" placeholder="0"></div>
+                    <div><label class="metric-label">Saved So Far (₹)</label><input type="number" id="g-saved" placeholder="0"></div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="g-save-btn" class="btn btn-primary" style="flex: 1;" onclick="handleGoal()">Create Goal</button>
+                        <button id="g-cancel-btn" class="btn btn-ghost hidden" onclick="cancelGoalEdit()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Investment Goals</h3>
+                <input type="text" id="goal-search" placeholder="Filter goals..." style="width: 240px;" oninput="renderGoals()">
+            </div>
+            <div id="goal-container" class="grid-3"></div>
+        </div>
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
