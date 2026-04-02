@@ -50,7 +50,7 @@
                 <h3 id="tx-form-title" style="margin-bottom: 15px;">Add Transaction</h3>
                 <div class="form-grid">
                     <div><label class="metric-label">Date</label><input type="date" id="f-date"></div>
-                    <div><label class="metric-label">Description</label><input type="text" id="f-desc" placeholder="Salary, Rent, Pizza..."></div>
+                    <div><label class="metric-label">Description</label><input type="text" id="f-desc" placeholder="Salary, Rent..."></div>
                     <div><label class="metric-label">Amount</label><input type="number" id="f-amt" placeholder="₹ 0.00"></div>
                     <div>
                         <label class="metric-label">Category</label>
@@ -61,8 +61,7 @@
                     </div>
                     <div>
                         <label class="metric-label">Account/Wallet</label>
-                        <select id="f-wallet">
-                            </select>
+                        <select id="f-wallet"></select>
                     </div>
                     <div><label class="metric-label">Type</label><select id="f-type"><option value="expense">Expense</option><option value="income">Income</option></select></div>
                     <button class="btn btn-primary" onclick="handleTransaction()">Save Entry</button>
@@ -79,11 +78,11 @@
 
         <div id="page-accounts" class="page">
             <div class="card">
-                <h3>🏦 Register New Account</h3>
+                <h3 id="acc-form-title">🏦 Register New Account</h3>
                 <div class="form-grid" style="margin-top:15px;">
                     <div style="grid-column: span 2;">
-                        <label class="metric-label">Bank Name</label>
-                        <input type="text" id="acc-name" placeholder="e.g., SBI, HDFC, Pocket Cash">
+                        <label class="metric-label">Account Name</label>
+                        <input type="text" id="acc-name" placeholder="HDFC, SBI, Cash...">
                     </div>
                     <div>
                         <label class="metric-label">Type</label>
@@ -92,52 +91,39 @@
                             <option value="Cash">Cash Wallet</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="addAccount()">Add Account</button>
+                    <div>
+                        <label class="metric-label" id="acc-amt-label">Current Balance (₹)</label>
+                        <input type="number" id="acc-initial-amt" placeholder="0">
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; align-items: flex-end;">
+                        <button id="acc-btn-main" class="btn btn-primary" style="flex: 1;" onclick="handleAccountAction()">Save Account</button>
+                        <button id="acc-btn-cancel" class="btn btn-ghost hidden" onclick="cancelAccountEdit()">Cancel</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid-3" id="bank-cards-container">
-                </div>
+            <div class="grid-3" id="bank-cards-container"></div>
 
-            <div class="card">
+            <div class="card" style="margin-top: 20px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h3>Fixed Deposit (FD) Manager</h3>
-                    <button class="btn btn-ghost btn-sm" onclick="showFDForm()">+ New FD Investment</button>
+                    <h3 id="fd-form-title">Fixed Deposit (FD) Manager</h3>
+                    <button class="btn btn-ghost btn-sm" onclick="showFDForm()">+ New FD</button>
                 </div>
-    
-                <div id="fd-form" class="form-grid hidden" style="margin-bottom:20px; padding:20px; background:var(--surface2); border-radius:var(--radius-sm); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
-                    <div>
-                        <label class="metric-label">Bank Name</label>
-                        <input type="text" id="fd-bank" placeholder="e.g. HDFC">
-                    </div>
-                    <div>
-                        <label class="metric-label">Beneficiary Name</label>
-                        <input type="text" id="fd-beneficiary" placeholder="e.g. Self, Mother">
-                    </div>
-                    <div>
-                        <label class="metric-label">Principal Amount</label>
-                        <input type="number" id="fd-amount" placeholder="₹">
-                    </div>
-                    <div>
-                        <label class="metric-label">Interest Rate %</label>
-                        <input type="number" step="0.1" id="fd-rate" placeholder="7.5">
-                    </div>
-                    <div>
-                        <label class="metric-label">Created Date</label>
-                        <input type="date" id="fd-created">
-                    </div>
-                    <div>
-                        <label class="metric-label">Maturity Date</label>
-                        <input type="date" id="fd-maturity">
-                    </div>
-                    <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                        <button class="btn btn-ghost" onclick="showFDForm()">Cancel</button>
-                        <button class="btn btn-primary" onclick="saveFD()">Save Investment</button>
+                
+                <div id="fd-form" class="form-grid hidden" style="margin-bottom:20px; padding:20px; background:var(--surface2); border-radius:var(--radius-sm); grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                    <div><label class="metric-label">Bank</label><input type="text" id="fd-bank"></div>
+                    <div><label class="metric-label">Beneficiary</label><input type="text" id="fd-beneficiary"></div>
+                    <div><label class="metric-label">Amount</label><input type="number" id="fd-amount"></div>
+                    <div><label class="metric-label">Rate %</label><input type="number" step="0.1" id="fd-rate"></div>
+                    <div><label class="metric-label">Created</label><input type="date" id="fd-created"></div>
+                    <div><label class="metric-label">Maturity</label><input type="date" id="fd-maturity"></div>
+                    <div style="grid-column: 1 / -1; display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+                        <button class="btn btn-ghost" onclick="cancelFDEdit()">Cancel</button>
+                        <button id="fd-btn-save" class="btn btn-primary" onclick="handleFDAction()">Save FD</button>
                     </div>
                 </div>
-
-                <div id="fd-list" style="overflow-x: auto;">
-                    </div>
+                <div id="fd-list"></div>
             </div>
         </div>
 
